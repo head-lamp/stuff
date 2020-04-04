@@ -1,28 +1,32 @@
-// basically this is a rip off of the queues crate
+use std::collections::VecDeque;
+
 #[derive(Debug)]
 pub struct Queue<T: Clone> {
-    queue: Vec<T>,
+    queue: VecDeque<T>,
 }
 
 impl<T: Clone> Queue<T> {
-    pub fn new() -> Queue<T>{
-        Queue{queue: vec![]}
+    pub fn new(size: usize) -> Queue<T>{
+        Queue{queue: VecDeque::<T>::with_capacity(size)}
     }
 
     pub fn add(&mut self, element: T) {
-        self.queue.push(element);
+        self.queue.push_back(element);
     }
 
     pub fn remove(&mut self) -> Result<T, &str> {
         if !self.queue.is_empty() {
-            Ok(self.queue.remove(0usize))
+            match self.queue.remove(0 as usize) {
+                Some(x) => Ok(x),
+                None => Err("invalid_index")
+            }
         } else {
             Err("queue is empty")
         }
     }
 
     pub fn peek(&self) -> Result<T, &str> {
-        match self.queue.first() {
+        match self.queue.get(0) {
             Some(val) => Ok(val.clone()),
             None => Err("queue is empty"),
         }
